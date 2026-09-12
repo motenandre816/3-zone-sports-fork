@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, it } from "node:test";
 import { handleCreateArticle } from "../app/api/articles/route";
-import { handleUpsertUser } from "../app/api/users/route";
+import { handleGetUser, handleUpsertUser } from "../app/api/users/route";
 
 let configured = true;
 let currentUser: { id: string; email?: string } | null = null;
@@ -178,6 +178,39 @@ describe("POST /api/articles", () => {
 });
 
 describe("POST /api/users", () => {
+  it("returns the current user for the session GET path", async () => {
+    currentUser = { id: "user-123", email: "editor@example.com" };
+
+    const response = await handleGetUser({
+      getCurrentUser: dependencies.getCurrentUser,
+      isSupabaseConfigured: dependencies.isSupabaseConfigured,
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(body, {
+      configured: true,
+      user: {
+        email: "editor@example.com",
+        id: "user-123",
+      },
+    });
+  });
+
+  it("returns a null user for the session GET path when signed out", async () => {
+    const response = await handleGetUser({
+      getCurrentUser: dependencies.getCurrentUser,
+      isSupabaseConfigured: dependencies.isSupabaseConfigured,
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(body, {
+      configured: true,
+      user: null,
+    });
+  });
+
   it("returns 400 for invalid payloads", async () => {
     const response = await handleUpsertUser(
       createJsonRequest("http://localhost:3000/api/users", {

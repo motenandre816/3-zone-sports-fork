@@ -36,7 +36,10 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      toRedirectUrl(request, `/login?error=${encodeURIComponent(error.message)}`),
+      toRedirectUrl(
+        request,
+        `/login?error=${encodeURIComponent(error.message)}&redirectTo=${encodeURIComponent(credentials.redirectTo)}`,
+      ),
     );
   }
 

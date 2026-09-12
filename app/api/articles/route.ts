@@ -116,7 +116,7 @@ export async function handleCreateArticle(
 
   if (error) {
     const status =
-      error.code === "23505" ? 409 : error.code === "42501" || error.code === "PGRST301" ? 403 : 400;
+      error.code === "23505" ? 409 : error.code === "42501" || error.code === "PGRST301" ? 403 : 500;
     return NextResponse.json({ error: error.message }, { status });
   }
 

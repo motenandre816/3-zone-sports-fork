@@ -34,10 +34,16 @@ const userRouteDependencies: UserRouteDependencies = {
 };
 
 export async function GET() {
-  const user = await userRouteDependencies.getCurrentUser();
+  return handleGetUser();
+}
+
+export async function handleGetUser(
+  dependencies: Pick<UserRouteDependencies, "getCurrentUser" | "isSupabaseConfigured"> = userRouteDependencies,
+) {
+  const user = await dependencies.getCurrentUser();
 
   return NextResponse.json({
-    configured: userRouteDependencies.isSupabaseConfigured(),
+    configured: dependencies.isSupabaseConfigured(),
     user: user
       ? {
           email: user.email,
