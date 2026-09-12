@@ -7,6 +7,7 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.vercel
 
 # IDE
 .vscode/
@@ -23,6 +24,7 @@ Thumbs.db
 dist/
 build/
 .next/
+*.tsbuildinfo
 
 # Testing
 coverage/
