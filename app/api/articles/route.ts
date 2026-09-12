@@ -77,7 +77,9 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const status =
+      error.code === "23505" ? 409 : error.code === "42501" || error.code === "PGRST301" ? 403 : 400;
+    return NextResponse.json({ error: error.message }, { status });
   }
 
   return NextResponse.json({ article: data }, { status: 201 });

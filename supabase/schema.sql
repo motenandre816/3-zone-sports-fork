@@ -42,8 +42,18 @@ create policy "Articles are viewable by everyone"
   for select
   using (true);
 
-create policy "Authenticated users can manage articles"
+create policy "Authenticated users can insert their own articles"
   on public.articles
-  for all
+  for insert
+  with check (created_by = auth.uid());
+
+create policy "Authenticated users can update their own articles"
+  on public.articles
+  for update
   using (created_by = auth.uid())
   with check (created_by = auth.uid());
+
+create policy "Authenticated users can delete their own articles"
+  on public.articles
+  for delete
+  using (created_by = auth.uid());

@@ -1,3 +1,5 @@
+import { sanitizeRedirectPath } from "@/lib/validators";
+
 type LoginPageProps = {
   searchParams: Promise<{
     error?: string;
@@ -8,7 +10,7 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
-  const redirectTo = params.redirectTo || "/profile";
+  const redirectTo = sanitizeRedirectPath(params.redirectTo || "/profile");
 
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-6 px-6 py-12">
