@@ -28,7 +28,16 @@ export async function POST(request: Request) {
     );
   }
 
+  if (!credentials.fullName) {
+    return NextResponse.redirect(
+      toRedirectUrl(request, "/signup?error=Full%20name%20is%20required."),
+    );
+  }
+
   const supabase = await createSupabaseServerClient();
+  const emailRedirectUrl = new URL("/auth/callback", env.siteUrl);
+  emailRedirectUrl.searchParams.set("next", "/profile");
+
   const { error } = await supabase.auth.signUp({
     email: credentials.email,
     password: credentials.password,
@@ -36,7 +45,7 @@ export async function POST(request: Request) {
       data: {
         full_name: credentials.fullName,
       },
-      emailRedirectTo: `${env.siteUrl}/auth/callback`,
+      emailRedirectTo: emailRedirectUrl.toString(),
     },
   });
 

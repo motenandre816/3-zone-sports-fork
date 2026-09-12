@@ -37,6 +37,7 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
             name="fullName"
             type="text"
             placeholder="3 Zone Sports Editor"
+            required
           />
         </label>
         <label className="block text-sm font-medium text-slate-700">

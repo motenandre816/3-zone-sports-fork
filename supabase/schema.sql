@@ -18,7 +18,7 @@ create table if not exists public.articles (
   author text not null,
   read_time text not null default '5 min read',
   published_at timestamptz not null default timezone('utc', now()),
-  created_by uuid references public.profiles(id) on delete set null,
+  created_by uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );

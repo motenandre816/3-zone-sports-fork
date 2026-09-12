@@ -6,6 +6,42 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { validateArticleInput } from "@/lib/validators";
 
+type ArticleRow = {
+  author: string;
+  category: string;
+  excerpt: string;
+  id: string;
+  published_at: string;
+  read_time: string;
+  slug: string;
+  title: string;
+};
+
+type ArticleMutationGateway = {
+  insert: (rows: Record<string, unknown>[]) => {
+    select: () => {
+      single: () => Promise<{
+        data: Record<string, unknown> | null;
+        error: { code?: string; message: string } | null;
+      }>;
+    };
+  };
+};
+
+type ArticleRouteDependencies = {
+  createSupabaseServerClient: () => Promise<{
+    from: (table: string) => unknown;
+  }>;
+  getCurrentUser: () => Promise<{ id: string } | null>;
+  isSupabaseConfigured: () => boolean;
+};
+
+const articleRouteDependencies: ArticleRouteDependencies = {
+  createSupabaseServerClient,
+  getCurrentUser,
+  isSupabaseConfigured,
+};
+
 export async function GET() {
   if (!isSupabaseConfigured()) {
     return NextResponse.json({ articles: featuredArticles, source: "seed" });
@@ -22,7 +58,7 @@ export async function GET() {
   }
 
   return NextResponse.json({
-    articles: (data || []).map((article) => ({
+    articles: ((data || []) as ArticleRow[]).map((article) => ({
       author: article.author,
       category: article.category,
       excerpt: article.excerpt,
@@ -36,7 +72,10 @@ export async function GET() {
   });
 }
 
-export async function POST(request: Request) {
+export async function handleCreateArticle(
+  request: Request,
+  dependencies: ArticleRouteDependencies = articleRouteDependencies,
+) {
   let payload: ArticlePayload;
 
   try {
@@ -45,36 +84,35 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid article payload." }, { status: 400 });
   }
 
-  if (!isSupabaseConfigured()) {
+  if (!dependencies.isSupabaseConfigured()) {
     return NextResponse.json(
       { error: "Configure Supabase environment variables before creating articles." },
       { status: 503 },
     );
   }
 
-  const user = await getCurrentUser();
+  const user = await dependencies.getCurrentUser();
 
   if (!user) {
     return NextResponse.json({ error: "You must be signed in to create an article." }, { status: 401 });
   }
 
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("articles")
-    .insert([
-      {
-        author: payload.author,
-        category: payload.category,
-        created_by: user.id,
-        excerpt: payload.excerpt,
-        published_at: new Date().toISOString(),
-        read_time: payload.readTime || "5 min read",
-        slug: payload.slug,
-        title: payload.title,
-      },
-    ])
-    .select()
-    .single();
+  const supabase = await dependencies.createSupabaseServerClient();
+  const articles = supabase.from("articles") as ArticleMutationGateway;
+  const mutation = articles.insert([
+    {
+      author: payload.author,
+      category: payload.category,
+      created_by: user.id,
+      excerpt: payload.excerpt,
+      published_at: new Date().toISOString(),
+      read_time: payload.readTime || "5 min read",
+      slug: payload.slug,
+      title: payload.title,
+    },
+  ]);
+  const result = await mutation.select().single();
+  const { data, error } = result;
 
   if (error) {
     const status =
@@ -83,4 +121,8 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ article: data }, { status: 201 });
+}
+
+export async function POST(request: Request) {
+  return handleCreateArticle(request);
 }
