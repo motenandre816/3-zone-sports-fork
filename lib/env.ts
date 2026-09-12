@@ -6,11 +6,12 @@ const env = {
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 };
 
-export const isSupabaseConfigured =
-  env.supabaseUrl.length > 0 && env.supabaseAnonKey.length > 0;
+export function isSupabaseConfigured() {
+  return env.supabaseUrl.length > 0 && env.supabaseAnonKey.length > 0;
+}
 
 export function getSupabaseEnv() {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     throw new Error(
       "Supabase environment variables are missing. Populate NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
     );

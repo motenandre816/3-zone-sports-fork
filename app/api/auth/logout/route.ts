@@ -7,7 +7,7 @@ function toRedirectUrl(request: Request, path: string) {
 }
 
 export async function POST(request: Request) {
-  if (isSupabaseConfigured) {
+  if (isSupabaseConfigured()) {
     const supabase = await createSupabaseServerClient();
     await supabase.auth.signOut();
   }

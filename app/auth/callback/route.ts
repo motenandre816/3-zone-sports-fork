@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { env, isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { sanitizeRedirectPath } from "@/lib/validators";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/profile";
+  const next = sanitizeRedirectPath(requestUrl.searchParams.get("next") || "/profile");
 
-  if (!code || !isSupabaseConfigured) {
+  if (!code || !isSupabaseConfigured()) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.redirect(
       toRedirectUrl(request, "/login?error=Add%20Supabase%20environment%20variables%20before%20signing%20in."),
     );

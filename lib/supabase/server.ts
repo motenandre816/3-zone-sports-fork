@@ -16,7 +16,18 @@ export async function createSupabaseServerClient() {
           cookiesToSet.forEach(({ name, options, value }) => {
             cookieStore.set(name, value, options);
           });
-        } catch {}
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            /Cookies can only be modified in a Server Action or Route Handler|ReadonlyRequestCookies/.test(
+              error.message,
+            )
+          ) {
+            return;
+          }
+
+          throw error;
+        }
       },
     },
   });

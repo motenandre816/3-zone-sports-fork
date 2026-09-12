@@ -45,5 +45,5 @@ create policy "Articles are viewable by everyone"
 create policy "Authenticated users can manage articles"
   on public.articles
   for all
-  using (auth.role() = 'authenticated')
-  with check (auth.role() = 'authenticated');
+  using (created_by = auth.uid())
+  with check (created_by = auth.uid());

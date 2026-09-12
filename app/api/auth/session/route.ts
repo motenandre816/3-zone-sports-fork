@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from "@/lib/env";
 export async function GET() {
   const user = await getCurrentUser();
   const response: AuthSessionResponse = {
-    configured: isSupabaseConfigured,
+    configured: isSupabaseConfigured(),
     user: user
       ? {
           email: user.email,

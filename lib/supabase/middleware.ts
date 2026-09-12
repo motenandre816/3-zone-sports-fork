@@ -7,7 +7,7 @@ export async function updateSession(request: NextRequest) {
     request,
   });
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return { response, user: null };
   }
 

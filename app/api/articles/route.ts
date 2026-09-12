@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import type { ArticlePayload } from "@/api/contracts";
+import { getCurrentUser } from "@/lib/auth";
 import { featuredArticles } from "@/lib/articles";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { validateArticleInput } from "@/lib/validators";
 
 export async function GET() {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json({ articles: featuredArticles, source: "seed" });
   }
 
@@ -44,11 +45,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid article payload." }, { status: 400 });
   }
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json(
       { error: "Configure Supabase environment variables before creating articles." },
       { status: 503 },
     );
+  }
+
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "You must be signed in to create an article." }, { status: 401 });
   }
 
   const supabase = await createSupabaseServerClient();
@@ -58,6 +65,7 @@ export async function POST(request: Request) {
       {
         author: payload.author,
         category: payload.category,
+        created_by: user.id,
         excerpt: payload.excerpt,
         published_at: new Date().toISOString(),
         read_time: payload.readTime || "5 min read",

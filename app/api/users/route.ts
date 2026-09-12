@@ -9,7 +9,7 @@ export async function GET() {
   const user = await getCurrentUser();
 
   return NextResponse.json({
-    configured: isSupabaseConfigured,
+    configured: isSupabaseConfigured(),
     user: user
       ? {
           email: user.email,
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Invalid profile payload." }, { status: 400 });
   }
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.json(
       { error: "Configure Supabase environment variables before creating user profiles." },
       { status: 503 },

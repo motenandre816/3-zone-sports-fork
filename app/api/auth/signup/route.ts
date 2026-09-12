@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return NextResponse.redirect(
       toRedirectUrl(request, "/signup?error=Add%20Supabase%20environment%20variables%20before%20creating%20accounts."),
     );

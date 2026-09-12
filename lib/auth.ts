@@ -2,7 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 
 export async function getCurrentUser() {
-  if (!isSupabaseConfigured) {
+  if (!isSupabaseConfigured()) {
     return null;
   }
 

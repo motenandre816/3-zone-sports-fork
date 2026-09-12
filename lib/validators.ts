@@ -1,3 +1,11 @@
+function sanitizeRedirectPath(value: string, fallback = "/profile") {
+  if (!value.startsWith("/") || value.startsWith("//") || value.includes("\\") || value.includes("://")) {
+    return fallback;
+  }
+
+  return value;
+}
+
 type ArticleInput = {
   title: string;
   excerpt: string;
@@ -63,7 +71,7 @@ export function validateCredentials(value: unknown) {
   const email = String(record.email || "").trim().toLowerCase();
   const password = String(record.password || "");
   const fullName = String(record.fullName || "").trim();
-  const redirectTo = String(record.redirectTo || "/profile").trim() || "/profile";
+  const redirectTo = sanitizeRedirectPath(String(record.redirectTo || "/profile").trim() || "/profile");
 
   if (!email || !password) {
     throw new Error("email and password are required.");
@@ -71,3 +79,5 @@ export function validateCredentials(value: unknown) {
 
   return { email, fullName, password, redirectTo };
 }
+
+export { sanitizeRedirectPath };

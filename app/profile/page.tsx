@@ -31,7 +31,7 @@ export default async function ProfilePage() {
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
             <h2 className="text-sm font-semibold text-slate-900">Supabase</h2>
-            <p className="mt-2 text-sm text-slate-600">{isSupabaseConfigured ? "Connected" : "Add env vars to connect"}</p>
+            <p className="mt-2 text-sm text-slate-600">{isSupabaseConfigured() ? "Connected" : "Add env vars to connect"}</p>
           </div>
         </div>
 
