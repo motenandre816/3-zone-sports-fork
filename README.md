@@ -26,7 +26,7 @@ npm run build      # create production build
 npm run start      # run production server
 npm run lint       # lint the codebase
 npm run typecheck  # TypeScript validation
-npm test           # alias for typecheck in this starter
+npm test           # run route-level API tests
 ```
 
 ## Project Structure

@@ -91,7 +91,7 @@ export async function handleUpsertUser(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ profile: data }, { status: 201 });
+  return NextResponse.json({ profile: data }, { status: 200 });
 }
 
 export async function POST(request: Request) {

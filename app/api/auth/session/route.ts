@@ -4,9 +4,16 @@ import { getCurrentUser } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
 
 export async function GET() {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json({
+      configured: false,
+      user: null,
+    });
+  }
+
   const user = await getCurrentUser();
   const response: AuthSessionResponse = {
-    configured: isSupabaseConfigured(),
+    configured: true,
     user: user
       ? {
           email: user.email,

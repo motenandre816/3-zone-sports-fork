@@ -88,6 +88,24 @@ describe("POST /api/articles", () => {
     assert.equal(lastArticleInsert, null);
   });
 
+  it("returns 503 when Supabase is not configured", async () => {
+    configured = false;
+
+    const response = await handleCreateArticle(
+      createJsonRequest("http://localhost:3000/api/articles", {
+        author: "A. Moten",
+        category: "NFL",
+        excerpt: "Preview content.",
+        slug: "preview-content",
+        title: "Preview content",
+      }),
+      dependencies,
+    );
+
+    assert.equal(response.status, 503);
+    assert.equal(lastArticleInsert, null);
+  });
+
   it("returns 401 when no user session exists", async () => {
     const response = await handleCreateArticle(
       createJsonRequest("http://localhost:3000/api/articles", {
@@ -102,6 +120,42 @@ describe("POST /api/articles", () => {
 
     assert.equal(response.status, 401);
     assert.equal(lastArticleInsert, null);
+  });
+
+  it("returns 409 for duplicate article slugs", async () => {
+    currentUser = { id: "user-123", email: "editor@example.com" };
+    articleInsertError = { code: "23505", message: "duplicate key value violates unique constraint" };
+
+    const response = await handleCreateArticle(
+      createJsonRequest("http://localhost:3000/api/articles", {
+        author: "A. Moten",
+        category: "NFL",
+        excerpt: "Preview content.",
+        slug: "preview-content",
+        title: "Preview content",
+      }),
+      dependencies,
+    );
+
+    assert.equal(response.status, 409);
+  });
+
+  it("returns 403 for article permission failures", async () => {
+    currentUser = { id: "user-123", email: "editor@example.com" };
+    articleInsertError = { code: "42501", message: "permission denied" };
+
+    const response = await handleCreateArticle(
+      createJsonRequest("http://localhost:3000/api/articles", {
+        author: "A. Moten",
+        category: "NFL",
+        excerpt: "Preview content.",
+        slug: "preview-content",
+        title: "Preview content",
+      }),
+      dependencies,
+    );
+
+    assert.equal(response.status, 403);
   });
 
   it("creates an article for the authenticated user", async () => {
@@ -136,6 +190,20 @@ describe("POST /api/users", () => {
     assert.equal(lastProfileUpsert, null);
   });
 
+  it("returns 503 when Supabase is not configured", async () => {
+    configured = false;
+
+    const response = await handleUpsertUser(
+      createJsonRequest("http://localhost:3000/api/users", {
+        fullName: "3 Zone Sports",
+      }),
+      dependencies,
+    );
+
+    assert.equal(response.status, 503);
+    assert.equal(lastProfileUpsert, null);
+  });
+
   it("returns 401 when no user session exists", async () => {
     const response = await handleUpsertUser(
       createJsonRequest("http://localhost:3000/api/users", {
@@ -146,6 +214,20 @@ describe("POST /api/users", () => {
 
     assert.equal(response.status, 401);
     assert.equal(lastProfileUpsert, null);
+  });
+
+  it("returns 500 when the profile upsert fails", async () => {
+    currentUser = { id: "user-123", email: "editor@example.com" };
+    profileUpsertError = { message: "database write failed" };
+
+    const response = await handleUpsertUser(
+      createJsonRequest("http://localhost:3000/api/users", {
+        fullName: "3 Zone Sports",
+      }),
+      dependencies,
+    );
+
+    assert.equal(response.status, 500);
   });
 
   it("upserts the current user profile", async () => {
@@ -160,7 +242,7 @@ describe("POST /api/users", () => {
       dependencies,
     );
 
-    assert.equal(response.status, 201);
+    assert.equal(response.status, 200);
     assert.equal(lastProfileUpsert?.id, "user-123");
     assert.equal(lastProfileUpsert?.full_name, "3 Zone Sports");
   });
