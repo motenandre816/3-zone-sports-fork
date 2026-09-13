@@ -7,10 +7,13 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.vercel
 
 # IDE
 .vscode/
 .idea/
+AGENTS.md
+CLAUDE.md
 *.swp
 *.swo
 *~
@@ -23,6 +26,7 @@ Thumbs.db
 dist/
 build/
 .next/
+*.tsbuildinfo
 
 # Testing
 coverage/

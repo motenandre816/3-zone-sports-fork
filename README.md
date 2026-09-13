@@ -1,62 +1,106 @@
-# 3-zone-sports-fork
+# 3 Zone Sports
 
-Sports media app built with modern web technologies.
+Production-ready sports media starter built with a completely free stack:
+
+- **Frontend**: Next.js App Router + React + TypeScript
+- **Styling**: Tailwind CSS
+- **Backend**: Next.js Route Handlers
+- **Database/Auth**: Supabase PostgreSQL + Supabase Auth
+- **Hosting**: Vercel free tier
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Development
+cp .env.example .env.local
 npm run dev
-
-# Build for production
-npm build
-
-# Run tests
-npm test
 ```
 
-## Configuration
+Open `http://localhost:3000`.
 
-Create a `.env.local` file with:
-```
-NEXT_PUBLIC_API_URL=your_api_url
+## Scripts
+
+```bash
+npm run dev        # start local development server
+npm run build      # create production build
+npm run start      # run production server
+npm run lint       # lint the codebase
+npm run typecheck  # TypeScript validation
+npm test           # run route-level API tests
 ```
 
 ## Project Structure
 
+```text
+app/              Next.js 13+ app router, pages, and API route handlers
+api/              Shared API contracts and payload types
+components/       Reusable UI building blocks
+lib/              Utilities, Supabase helpers, and starter data
+public/           Static assets
+styles/           Tailwind-connected styling tokens
+supabase/         SQL schema for profiles and articles
 ```
-├── src/
-│   ├── components/    # React components
-│   ├── pages/         # Next.js pages
-│   ├── api/           # API routes
-│   ├── utils/         # Utility functions
-│   └── styles/        # Global styles
-├── public/            # Static assets
-└── tests/             # Test files
-```
 
-## Copilot Integration
+## Supabase Setup
 
-✅ **GitHub Copilot is now configured for this project**
+1. Create a free Supabase project.
+2. Copy `.env.example` to `.env.local`.
+3. Add:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `NEXT_PUBLIC_SITE_URL`
+4. Run the SQL in `/supabase/schema.sql` inside the Supabase SQL editor.
+5. In Supabase Auth, add your local and production callback URLs:
+   - `http://localhost:3000/auth/callback`
+   - `https://your-vercel-domain.vercel.app/auth/callback`
 
-This project includes `.copilot-instructions.md` with custom guidelines for GitHub Copilot. Copilot will use these instructions to provide better code suggestions aligned with the project standards.
+> This repository includes the schema and env template, but real Supabase keys and Vercel deployment settings must still be added from your own accounts.
 
-**To use Copilot:**
-1. Install [GitHub Copilot extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) in VS Code
-2. Sign in with your GitHub account
-3. Start coding—Copilot will provide intelligent suggestions
-4. Press `Tab` to accept suggestions or `Esc` to dismiss
+## Included Starter Features
 
-## Development Guidelines
+- Homepage layout with sports media hero section
+- Reusable article card component
+- Header and footer navigation
+- Login and signup pages
+- Protected `/profile` and `/dashboard` routes backed by Next.js auth middleware
+- Auth session, users, articles, comments, newsletter, and analytics API routes
+- Supabase SSR helpers for browser, server, and middleware usage
+- Public article detail, author, category, and search pages
+- Editorial dashboard with article create/edit and publish-status controls
+- Newsletter capture and comment submission flows
 
-- Follow the code style conventions in `.copilot-instructions.md`
-- Run tests before committing
-- Create feature branches for new work
-- Submit PRs with clear descriptions
+## API Routes
 
-## Support
+- `GET /api/articles` - returns Supabase articles or seeded fallback content
+- `POST /api/articles` - creates an article when Supabase is configured
+- `GET /api/articles/[slug]` - returns a single article by slug
+- `PUT /api/articles/[slug]` - updates an existing article owned by the signed-in user
+- `GET /api/users` - returns the current authenticated user session
+- `POST /api/users` - upserts the current user profile
+- `GET /api/auth/session` - returns current auth session info
+- `POST /api/auth/login` - signs a user in
+- `POST /api/auth/signup` - creates a user account
+- `POST /api/auth/logout` - signs a user out
+- `POST /api/comments` - creates an article comment
+- `POST /api/newsletter` - saves a newsletter subscription
+- `POST /api/analytics` - stores first-party page-view events
 
-For issues or questions, create a GitHub issue in this repository.
+## Deploying to Vercel
+
+1. Push the repository to GitHub.
+2. Import the repo into Vercel.
+3. Add the same environment variables from `.env.local`.
+4. Set `NEXT_PUBLIC_SITE_URL` to your Vercel production URL or custom domain.
+5. Deploy. Vercel automatically runs `npm install` and `npm run build`.
+
+`vercel.json` is included for a clean Next.js deployment baseline.
+
+## Free Tier Notes
+
+- **Supabase**: free PostgreSQL storage and built-in auth for MVP traffic
+- **Vercel**: free hobby deployment for personal or early-stage launches
+- **Tailwind CSS**: open-source styling with no paid requirement
+- **Next.js**: open-source full-stack React framework
+
+This gives 3 Zone Sports a professional $0/month foundation you can extend with live scores, editorial workflows, memberships, and media publishing features.
