@@ -55,26 +55,36 @@ supabase/         SQL schema for profiles and articles
    - `http://localhost:3000/auth/callback`
    - `https://your-vercel-domain.vercel.app/auth/callback`
 
+> This repository includes the schema and env template, but real Supabase keys and Vercel deployment settings must still be added from your own accounts.
+
 ## Included Starter Features
 
 - Homepage layout with sports media hero section
 - Reusable article card component
 - Header and footer navigation
 - Login and signup pages
-- Protected `/profile` route backed by Next.js proxy auth checks
-- Auth session, users, and articles API routes
+- Protected `/profile` and `/dashboard` routes backed by Next.js auth middleware
+- Auth session, users, articles, comments, newsletter, and analytics API routes
 - Supabase SSR helpers for browser, server, and middleware usage
+- Public article detail, author, category, and search pages
+- Editorial dashboard with article create/edit and publish-status controls
+- Newsletter capture and comment submission flows
 
 ## API Routes
 
 - `GET /api/articles` - returns Supabase articles or seeded fallback content
 - `POST /api/articles` - creates an article when Supabase is configured
+- `GET /api/articles/[slug]` - returns a single article by slug
+- `PUT /api/articles/[slug]` - updates an existing article owned by the signed-in user
 - `GET /api/users` - returns the current authenticated user session
 - `POST /api/users` - upserts the current user profile
 - `GET /api/auth/session` - returns current auth session info
 - `POST /api/auth/login` - signs a user in
 - `POST /api/auth/signup` - creates a user account
 - `POST /api/auth/logout` - signs a user out
+- `POST /api/comments` - creates an article comment
+- `POST /api/newsletter` - saves a newsletter subscription
+- `POST /api/analytics` - stores first-party page-view events
 
 ## Deploying to Vercel
 

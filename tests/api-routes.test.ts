@@ -33,6 +33,18 @@ function createJsonRequest(url: string, body: Record<string, unknown>) {
   });
 }
 
+function createValidArticlePayload() {
+  return {
+    author: "A. Moten",
+    category: "NFL",
+    content: "Preview content for the full article body.",
+    excerpt: "Preview content.",
+    league: "Professional Football",
+    slug: "preview-content",
+    title: "Preview content",
+  };
+}
+
 const dependencies = {
   createSupabaseServerClient: async () => ({
     from(table: string) {
@@ -92,13 +104,7 @@ describe("POST /api/articles", () => {
     configured = false;
 
     const response = await handleCreateArticle(
-      createJsonRequest("http://localhost:3000/api/articles", {
-        author: "A. Moten",
-        category: "NFL",
-        excerpt: "Preview content.",
-        slug: "preview-content",
-        title: "Preview content",
-      }),
+      createJsonRequest("http://localhost:3000/api/articles", createValidArticlePayload()),
       dependencies,
     );
 
@@ -108,13 +114,7 @@ describe("POST /api/articles", () => {
 
   it("returns 401 when no user session exists", async () => {
     const response = await handleCreateArticle(
-      createJsonRequest("http://localhost:3000/api/articles", {
-        author: "A. Moten",
-        category: "NFL",
-        excerpt: "Preview content.",
-        slug: "preview-content",
-        title: "Preview content",
-      }),
+      createJsonRequest("http://localhost:3000/api/articles", createValidArticlePayload()),
       dependencies,
     );
 
@@ -127,13 +127,7 @@ describe("POST /api/articles", () => {
     articleInsertError = { code: "23505", message: "duplicate key value violates unique constraint" };
 
     const response = await handleCreateArticle(
-      createJsonRequest("http://localhost:3000/api/articles", {
-        author: "A. Moten",
-        category: "NFL",
-        excerpt: "Preview content.",
-        slug: "preview-content",
-        title: "Preview content",
-      }),
+      createJsonRequest("http://localhost:3000/api/articles", createValidArticlePayload()),
       dependencies,
     );
 
@@ -145,13 +139,7 @@ describe("POST /api/articles", () => {
     articleInsertError = { code: "42501", message: "permission denied" };
 
     const response = await handleCreateArticle(
-      createJsonRequest("http://localhost:3000/api/articles", {
-        author: "A. Moten",
-        category: "NFL",
-        excerpt: "Preview content.",
-        slug: "preview-content",
-        title: "Preview content",
-      }),
+      createJsonRequest("http://localhost:3000/api/articles", createValidArticlePayload()),
       dependencies,
     );
 
@@ -162,13 +150,7 @@ describe("POST /api/articles", () => {
     currentUser = { id: "user-123", email: "editor@example.com" };
 
     const response = await handleCreateArticle(
-      createJsonRequest("http://localhost:3000/api/articles", {
-        author: "A. Moten",
-        category: "NFL",
-        excerpt: "Preview content.",
-        slug: "preview-content",
-        title: "Preview content",
-      }),
+      createJsonRequest("http://localhost:3000/api/articles", createValidArticlePayload()),
       dependencies,
     );
 

@@ -6,8 +6,12 @@ const env = {
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 };
 
+function hasRealValue(value: string) {
+  return Boolean(value.trim()) && !value.includes("your-");
+}
+
 export function isSupabaseConfigured() {
-  return env.supabaseUrl.length > 0 && env.supabaseAnonKey.length > 0;
+  return hasRealValue(env.supabaseUrl) && hasRealValue(env.supabaseAnonKey);
 }
 
 export function getSupabaseEnv() {

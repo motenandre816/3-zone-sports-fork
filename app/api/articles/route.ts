@@ -6,17 +6,6 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { validateArticleInput } from "@/lib/validators";
 
-type ArticleRow = {
-  author: string;
-  category: string;
-  excerpt: string;
-  id: string;
-  published_at: string;
-  read_time: string;
-  slug: string;
-  title: string;
-};
-
 type ArticleMutationGateway = {
   insert: (rows: Record<string, unknown>[]) => {
     select: () => {

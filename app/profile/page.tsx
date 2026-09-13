@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -37,12 +38,12 @@ export default async function ProfilePage() {
 
         <form action="/api/auth/logout" method="post" className="mt-8">
           <div className="flex flex-wrap gap-3">
-            <a
+            <Link
               className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
               href="/dashboard"
             >
               Open dashboard
-            </a>
+            </Link>
             <button
               className="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
               type="submit"
