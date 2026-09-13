@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ArticlePayload } from "@/api/contracts";
+import { getPublishedArticles } from "@/lib/content";
 import { getCurrentUser } from "@/lib/auth";
-import { featuredArticles } from "@/lib/articles";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { validateArticleInput } from "@/lib/validators";
@@ -43,33 +43,8 @@ const articleRouteDependencies: ArticleRouteDependencies = {
 };
 
 export async function GET() {
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ articles: featuredArticles, source: "seed" });
-  }
-
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
-    .from("articles")
-    .select("id, category, title, excerpt, author, published_at, read_time, slug")
-    .order("published_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json({ articles: featuredArticles, error: error.message, source: "fallback" }, { status: 200 });
-  }
-
-  return NextResponse.json({
-    articles: ((data || []) as ArticleRow[]).map((article) => ({
-      author: article.author,
-      category: article.category,
-      excerpt: article.excerpt,
-      id: article.id,
-      publishedAt: article.published_at,
-      readTime: article.read_time,
-      slug: article.slug,
-      title: article.title,
-    })),
-    source: "supabase",
-  });
+  const articles = await getPublishedArticles();
+  return NextResponse.json({ articles, source: isSupabaseConfigured() ? "supabase" : "seed" });
 }
 
 export async function handleCreateArticle(
@@ -102,12 +77,20 @@ export async function handleCreateArticle(
   const mutation = articles.insert([
     {
       author: payload.author,
+      author_slug: payload.authorSlug,
       category: payload.category,
+      content: payload.content,
       created_by: user.id,
       excerpt: payload.excerpt,
-      published_at: new Date().toISOString(),
+      image_url: payload.imageUrl,
+      is_featured: payload.isFeatured,
+      league: payload.league,
+      published_at: payload.status === "published" ? payload.publishedAt || new Date().toISOString() : null,
       read_time: payload.readTime || "5 min read",
       slug: payload.slug,
+      status: payload.status,
+      tags: payload.tags,
+      team: payload.team || null,
       title: payload.title,
     },
   ]);

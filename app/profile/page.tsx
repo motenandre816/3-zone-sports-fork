@@ -36,12 +36,20 @@ export default async function ProfilePage() {
         </div>
 
         <form action="/api/auth/logout" method="post" className="mt-8">
-          <button
-            className="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
-            type="submit"
-          >
-            Sign out
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <a
+              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
+              href="/dashboard"
+            >
+              Open dashboard
+            </a>
+            <button
+              className="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
+              type="submit"
+            >
+              Sign out
+            </button>
+          </div>
         </form>
       </div>
     </div>
